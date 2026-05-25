@@ -1,215 +1,228 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="utf-8" />
-    <title>Sunshine Coast Bike Racks</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sunshine Coast Bike Racks</title>
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
-    <style>
-        html, body {
-        height: 100%;
-        margin: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+<style>
+    html, body {
+    height: 100%;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
-        #map {
-        height: 100%;
-        width: 100%;
-        }
+    #map {
+    height: 100%;
+    width: 100%;
+    }
 
-        /* Overview panel */
-        .overview {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        max-width: 360px;
-        background: rgba(255, 255, 255, 0.95);
-        padding: 14px 16px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        z-index: 1000;
-        font-size: 14px;
-        line-height: 1.4;
-        }
+    /* Overview panel */
+    .overview {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    max-width: 360px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 14px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    z-index: 1000;
+    font-size: 14px;
+    line-height: 1.4;
+    }
 
-        .overview h2 {
-        margin: 0 0 6px 0;
-        font-size: 16px;
-        }
+    .overview h2 {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    }
 
-        .overview p {
-        margin: 6px 0;
-        }
+    .overview p {
+    margin: 6px 0;
+    }
 
-        .overview a {
-        color: #0066cc;
-        text-decoration: none;
-        font-weight: 500;
-        }
+    .overview a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+    }
 
-        .overview a:hover {
-        text-decoration: underline;
-        }
+    .overview a:hover {
+    text-decoration: underline;
+    }
 
-        .popup-title {
-        font-weight: 600;
-        margin-bottom: 4px;
-        }
-    </style>
-    </head>
-    <body>
+    .popup-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    }
+</style>
+</head>
+<body>
 
-    <div id="map"></div>
+<div id="map"></div>
 
-    <div class="overview">
-    <h2>Sunshine Coast Bike Racks</h2>
-    <p>
-        This map shows <strong>existing</strong> and <strong>desired</strong> public bike
-        rack locations across the Sunshine Coast, BC, including Gibsons, Sechelt,
-        and Roberts Creek.
-    </p>
-    <p>
-        <strong>Existing bike racks</strong> are sourced from
-        <a href="https://www.openstreetmap.org" target="_blank" rel="noopener">
-        OpenStreetMap
-        </a>, a free, community-maintained map.
-    </p>
-    <p>
-        If you notice a bike rack that is missing or incorrect, you can help by
-        adding or updating it directly in OpenStreetMap.
-    </p>
-    <p>
-        <a
-        href="https://www.openstreetmap.org/edit"
-        target="_blank"
-        rel="noopener"
-        >
-        ➕ Add or edit bike racks in OpenStreetMap
-        </a>
-    </p>
-    </div>
+<div class="overview">
+<h2>Sunshine Coast Bike Racks</h2>
+<p>
+    This map shows <strong>existing</strong> and <strong>desired</strong> public bike
+    rack locations across the Sunshine Coast, BC, including Gibsons, Sechelt,
+    and Roberts Creek.
+</p>
+<p>
+    <strong>Existing bike racks</strong> are sourced from
+    <a href="https://www.openstreetmap.org" target="_blank" rel="noopener">
+    OpenStreetMap
+    </a>, a free, community-maintained map.
+</p>
+<p>
+    If you notice a bike rack that is missing or incorrect, you can help by
+    adding or updating it directly in OpenStreetMap.
+</p>
+<p>
+    <a
+    href="https://www.openstreetmap.org/edit"
+    target="_blank"
+    rel="noopener"
+    >
+    ➕ Add or edit bike racks in OpenStreetMap
+    </a>
+</p>
+</div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <script>
-    // ---------------------------------
-    // 1. Initialize map
-    // ---------------------------------
-    const map = L.map('map').setView([49.45, -123.72], 11);
+<script>
+// Define Base Layers
+const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+});
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
 
-    // ---------------------------------
-    // 2. Icons
-    // ---------------------------------
-    const actualIcon = L.icon({
-        iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/green-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32]
-    });
+const darkMap = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
 
-    const wantedIcon = L.icon({
-        iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32]
-    });
+// Initialize map with a default base layer (osmMap)
+const map = L.map('map', {
+    center: [49.45, -123.72],
+    zoom: 11,
+    layers: [osmMap] // This sets OpenStreetMap as the initial active base layer
+});
 
-    // ---------------------------------
-    // 3. Layers
-    // ---------------------------------
-    const actualLayer = L.layerGroup().addTo(map);
-    const wantedLayer = L.layerGroup().addTo(map);
+// Icons
+const actualIcon = L.icon({
+    iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/green-dot.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32]
+});
 
-    // ---------------------------------
-    // 4. EXISTING racks from OpenStreetMap
-    // ---------------------------------
-    const overpassQuery = `
-        [out:json][timeout:25];
-        (
-        node["amenity"="bicycle_parking"](49.35,-123.80,49.52,-123.45);
-        way["amenity"="bicycle_parking"](49.35,-123.80,49.52,-123.45);
-        );
-        out center tags;
-    `;
+const wantedIcon = L.icon({
+    iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32]
+});
 
-    fetch("https://overpass-api.de/api/interpreter", {
-        method: "POST",
-        body: overpassQuery
-    })
-        .then(res => res.json())
-        .then(data => {
-        data.elements.forEach(el => {
-            const lat = el.lat || el.center?.lat;
-            const lon = el.lon || el.center?.lon;
-            if (!lat || !lon) return;
+// Data Overlays
+const actualLayer = L.layerGroup().addTo(map);
+const wantedLayer = L.layerGroup().addTo(map);
 
-            const tags = el.tags || {};
+// EXISTING racks from OpenStreetMap
+const overpassQuery = `
+    [out:json][timeout:25];
+    (
+    node["amenity"="bicycle_parking"](49.35,-123.80,49.52,-123.45);
+    way["amenity"="bicycle_parking"](49.35,-123.80,49.52,-123.45);
+    );
+    out center tags;
+`;
 
-            L.marker([lat, lon], { icon: actualIcon })
-            .bindPopup(`
-                <div class="popup-title">Existing Bike Parking (OSM)</div>
-                Type: ${tags.bicycle_parking || "Unspecified"}<br>
-                Capacity: ${tags.capacity || "Unknown"}<br>
-                Covered: ${tags.covered || "Unknown"}
-            `)
-            .addTo(actualLayer);
-        });
-        })
-        .catch(err => console.error("OSM load error:", err));
+fetch("https://overpass-api.de/api/interpreter", {
+    method: "POST",
+    body: overpassQuery
+})
+    .then(res => res.json())
+    .then(data => {
+    data.elements.forEach(el => {
+        const lat = el.lat || el.center?.lat;
+        const lon = el.lon || el.center?.lon;
+        if (!lat || !lon) return;
 
-    // ---------------------------------
-    // 5. WANTED racks (hardcoded)
-    // ---------------------------------
-    const wantedBikeRacks = [
-        {
-        name: "Roberts Creek Beach Access",
-        lat: 49.4239,
-        lon: -123.6422,
-        reason: "High visitor volume, no bike parking",
-        priority: "High"
-        },
-        {
-        name: "Sechelt Transit Exchange",
-        lat: 49.4708,
-        lon: -123.7593,
-        reason: "Improve multimodal access",
-        priority: "High"
-        },
-        {
-        name: "Gibsons Landing Commercial Area",
-        lat: 49.3968,
-        lon: -123.5149,
-        reason: "Retail cluster with limited bike parking",
-        priority: "Medium"
-        }
-    ];
+        const tags = el.tags || {};
 
-    wantedBikeRacks.forEach(rack => {
-        L.marker([rack.lat, rack.lon], { icon: wantedIcon })
+        L.marker([lat, lon], { icon: actualIcon })
         .bindPopup(`
-            <div class="popup-title">Proposed Bike Rack</div>
-            <b>${rack.name}</b><br>
-            Reason: ${rack.reason}<br>
-            Priority: ${rack.priority}
+            <div class="popup-title">Existing Bike Parking (OSM)</div>
+            Type: ${tags.bicycle_parking || "Unspecified"}<br>
+            Capacity: ${tags.capacity || "Unknown"}<br>
+            Covered: ${tags.covered || "Unknown"}
         `)
-        .addTo(wantedLayer);
+        .addTo(actualLayer);
     });
+    })
+    .catch(err => console.error("OSM load error:", err));
 
-    // ---------------------------------
-    // 6. Layer toggle
-    // ---------------------------------
-    L.control.layers(null, {
-        "Existing Bike Racks (OSM)": actualLayer,
-        "Proposed Bike Racks": wantedLayer
-    }).addTo(map);
 
-    </script>
+// WANTED racks (hardcoded)
+const wantedBikeRacks = [
+    {
+    name: "Roberts Creek Beach Access",
+    lat: 49.4239,
+    lon: -123.6422,
+    reason: "High visitor volume, no bike parking",
+    priority: "High"
+    },
+    {
+    name: "Sechelt Transit Exchange",
+    lat: 49.4708,
+    lon: -123.7593,
+    reason: "Improve multimodal access",
+    priority: "High"
+    },
+    {
+    name: "Gibsons Landing Commercial Area",
+    lat: 49.3968,
+    lon: -123.5149,
+    reason: "Retail cluster with limited bike parking",
+    priority: "Medium"
+    }
+];
 
-    </body>
-    </html>
+wantedBikeRacks.forEach(rack => {
+    L.marker([rack.lat, rack.lon], { icon: wantedIcon })
+    .bindPopup(`
+        <div class="popup-title">Proposed Bike Rack</div>
+        <b>${rack.name}</b><br>
+        Reason: ${rack.reason}<br>
+        Priority: ${rack.priority}
+    `)
+    .addTo(wantedLayer);
+});
+
+// Setup Objects for Layer Control UI
+const baseMaps = {
+    "Street Map (OSM)": osmMap,
+    "Satellite Imagery": satelliteMap,
+    "Dark Map": darkMap
+};
+
+const overlayMaps = {
+    "Existing Bike Racks (OSM)": actualLayer,
+    "Proposed Bike Racks": wantedLayer
+};
+
+// Create and Add the Control Box to the Top Right
+L.control.layers(baseMaps, overlayMaps, {
+    collapsed: false // Set to true if you want the box to hide behind an icon until hovered
+}).addTo(map);
+
+</script>
+
+</body>
+</html>
