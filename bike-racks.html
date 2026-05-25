@@ -110,6 +110,8 @@ const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/se
 const map = L.map('map', {
     center: [49.45, -123.72],
     zoom: 11,
+    minZoom: 5,   // 
+    maxZoom: 18,  // 
     layers: [osmMap] // This sets OpenStreetMap as the initial active base layer
 });
 
