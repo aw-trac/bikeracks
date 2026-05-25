@@ -105,9 +105,6 @@ const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/se
     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
 
-const darkMap = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
 
 // Initialize map with a default base layer (osmMap)
 const map = L.map('map', {
@@ -208,8 +205,7 @@ wantedBikeRacks.forEach(rack => {
 // Setup Objects for Layer Control UI
 const baseMaps = {
     "Street Map (OSM)": osmMap,
-    "Satellite Imagery": satelliteMap,
-    "Dark Map": darkMap
+    "Satellite Imagery": satelliteMap
 };
 
 const overlayMaps = {
